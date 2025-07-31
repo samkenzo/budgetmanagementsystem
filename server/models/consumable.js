@@ -1,22 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 
-const EquipmentSchema = new Schema({
+const ConsumableSchema = new Schema({
+  username: String,
   department: String,
-  budget: {type:Number},
+  budget: Number,
   expenditure: { type: Number, default: 0 },
   year: { type: Date, default: () => new Date().getFullYear() },
   indents_process: [
     {
-      entry_date: { type: Date, default: Date.no.getFullYear },
+      entry_date: { type: Date, default: Date.now },
       particulars: String,
       indenter: String,
-      indent_no: { type: Number},
+      indent_no: { type: Number },
       po_no: Number,
       indent_amount: Number,
       amount: Number,
-      nameofparty:String,
-      category:String,
-      active:Boolean
+      account_head: Number,
     },
   ],
   direct_purchase: [
@@ -28,9 +27,8 @@ const EquipmentSchema = new Schema({
       po_no: Number,
       indent_amount: Number,
       amount: Number,
-      nameofparty:String,
-      category:String,
-      active: Boolean
+      account_head: String,
+      active: Boolean,
     },
   ],
   indent_pay_done: [
@@ -38,17 +36,16 @@ const EquipmentSchema = new Schema({
       entry_date: { type: Date, default: Date.now },
       particulars: String,
       indenter: String,
-      indent_no: { type: Number},
+      indent_no: { type: Number },
       po_no: Number,
       indent_amount: Number,
       amount: Number,
-      nameofparty: String,
-      category:String,
-      active:Boolean
+      account_head: String,
+      active: Boolean,
     },
   ],
 });
 
-const Equipment = mongoose.model("equipment", EquipmentSchema);
+const Consumable = mongoose.model("consumable", ConsumableSchema);
 
-export default Equipment;
+export default Consumable;
