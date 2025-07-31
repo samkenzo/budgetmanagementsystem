@@ -39,7 +39,16 @@ export const addDept = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const { username, name, password, budget, expenditure, year } = req.body;
+    const {
+      username,
+      name,
+      password,
+      cons_budget,
+      cons_expenditure,
+      equip_budget,
+      equip_expenditure,
+      year,
+    } = req.body;
     let user = await User.findOne({ username });
     if (user) {
       return res.status(400).json({ error: "Username already exists!" });
@@ -47,8 +56,8 @@ export const addDept = async (req, res) => {
     let entry = await Consumable.create({
       username,
       department: name,
-      budget,
-      expenditure,
+      cons_budget,
+      cons_expenditure,
       year,
       indents_process: [],
       direct_purchase: [],
@@ -57,8 +66,8 @@ export const addDept = async (req, res) => {
     let entry2 = await Equipment.create({
       username,
       department: name,
-      budget,
-      expenditure,
+      equip_budget,
+      equip_expenditure,
       year,
       indents_process: [],
       direct_purchase: [],

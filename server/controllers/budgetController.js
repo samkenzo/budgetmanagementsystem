@@ -133,61 +133,39 @@ export const addEqEntry = async (req, res) => {
 //==========================================================================================
 //fetching budget data
 export const fetchTable = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(404).json({ errors: errors.array() });
-  }
+
   try {
-    const { department_name, budget_type } = req.body;
-    if (budget_type == "Equipment") {
-      let table = await Equipment.findOne({ department: department_name });
+    const { username, type, year } = req.query;
+    if (type) {
+      let table = await Equipment.findOne({ username, year });
       if (!table) {
         return res.status(400).json({
           error: "Dept does not exist, contact Admin to add the department",
         });
       }
-      let {
-        expenditure,
-        year,
+       let { indents_process, direct_purchase, indent_pay_done } = table;
+      return res.json({
         indents_process,
         direct_purchase,
         indent_pay_done,
-        department,
-        budget,
-      } = table;
-      return res.json({
-        department: department,
-        budget: budget,
-        expenditure: expenditure,
-        year: year,
-        indents_process: indents_process,
-        direct_purchase: direct_purchase,
-        indent_pay_done: indent_pay_done,
+        
       });
-    } else if (budget_type == "Consumable") {
-      let table = await Consumable.findOne({ department: department_name });
+   } else {
+      let table = await Consumable.findOne({ username, year });
       if (!table) {
         return res.status(400).json({
           error: "Dept does not exist, contact Admin to add the department",
         });
       }
       let {
-        expenditure,
-        year,
         indents_process,
         direct_purchase,
         indent_pay_done,
-        department,
-        budget,
       } = table;
       return res.json({
-        department: department,
-        budget: budget,
-        expenditure: expenditure,
-        year: year,
-        indents_process: indents_process,
-        direct_purchase: direct_purchase,
-        indent_pay_done: indent_pay_done,
+        indents_process,
+        direct_purchase,
+        indent_pay_done,
       });
     }
   } catch (err) {
@@ -214,13 +192,14 @@ export const fetchSummary = async (req, res) => {
     const con_result = [];
     for (const con of con_departments) {
       con_result.push({
+        //Indent calculation Remaining
         username: con.username,
         name: con.department,
         budget: con.budget,
         expenditure: con.expenditure,
       });
     }
-    const eq_departments = await Equipment.find({ year: year });
+    const eq_departments = await Equipment.find({ year });
     const eq_result = [];
     for (const eq of eq_departments) {
       eq_result.push({
