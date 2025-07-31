@@ -1,5 +1,5 @@
 import express from "express";
-import { addEqEntry,addConEntry, addDept, createUser, login, fetchtable } from "../controllers/userController.js"; 
+import { addEqEntry,addConEntry, addDept, createUser, login, fetchtable , summary} from "../controllers/userController.js"; 
 import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
@@ -22,66 +22,46 @@ router.post(
       min: 6,
     }),
   ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    try {
-      let user = await User.findOne({ username: req.body.username });
-      if (user) {
-        return res.status(400).json({ error: "Username already exists!" });
-      }
-
-      const salt = await bcrypt.genSalt(10);
-      let secPass = await bcrypt.hash(req.body.password, salt);
-      const { username, name, role } = req.body;
-      user = await User.create({
-        username,
-        name,
-        password: secPass,
-        role,
-      });
-      const data = { id: user.id };
-      const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({ authToken });
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Some error occured!");
-    }
-  }
+  createUser
 );
 
 router.post(
   "/login",
-  [body("password", "Password should not be empty!").exists()],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { username, password } = req.body;
-    try {
-      let user = await User.findOne({ username });
-      if (!user) {
-        return res
-          .status(400)
-          .json({ error: "Please try to login with correct credentials." });
-      }
-      const passwordCheck = await bcrypt.compare(password, user.password);
-      if (!passwordCheck)
-        return res
-          .status(400)
-          .json({ error: "Please try to login with correct credentials." });
-      const { name, role } = user;
-      const data = { user: { id: user.id } };
-      const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({ user: { username, name, role }, authToken });
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Some error occured!");
-    }
-  }
+  [
+    body("username", "Username should not be empty!").exists(),
+    body("password", "Password should not be empty!").exists(),
+  ],
+  login
 );
+router.post(
+  "/adddept",
+
+  addDept
+);
+router.post(
+  "/addconsumableentry",
+
+  addConEntry
+);
+// router.post(
+//   "/addequipmentdept",
+
+//   addequipmentdept
+// );
+router.post(
+  "/addequipmententry",
+
+  addEqEntry
+);
+
+router.get(
+  "/fetchtable",
+
+  fetchtable
+);
+router.get(
+  "/summary",
+  summary
+)
 
 export default router;

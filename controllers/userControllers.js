@@ -307,3 +307,32 @@ export const addDept =  async (req, res) => {
 //{"department_name":"MEMS",
 // "budget_type":"Equipment"
 // }
+
+//==================================================
+
+//summary
+export const summary = async(req,res)=>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(404).json({errors:errors.array()});
+  }
+  try{
+  
+    const con_departments = await Consumable.find({});
+    const con_result = [];
+        for (const con of con_departments) {
+            con_result.push({ name: con.department, budget: con.budget, expenditure: con.expenditure,remaining:(con.budget-con.expenditure) });
+    }
+    const eq_departments = await Equipment.find({});
+    const eq_result = [];
+        for (const eq of eq_departments) {
+            eq_result.push({ name: eq.department, budget: eq.budget, expenditure: eq.expenditure,remaining:(eq.budget-eq.expenditure) });
+    }
+    return res.json({con_result,eq_result})
+
+  }
+  catch(err){
+    console.error(err.message);
+    res.status(500).send("Some error occured!");
+  }
+}
