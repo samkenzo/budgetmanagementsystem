@@ -56,8 +56,8 @@ export const addDept = async (req, res) => {
     let entry = await Consumable.create({
       username,
       department: name,
-      cons_budget,
-      cons_expenditure,
+       budget:cons_budget,
+      expdenditure:cons_expenditure,
       year,
       indents_process: [],
       direct_purchase: [],
@@ -66,8 +66,8 @@ export const addDept = async (req, res) => {
     let entry2 = await Equipment.create({
       username,
       department: name,
-      equip_budget,
-      equip_expenditure,
+      budget:equip_budget,
+      expenditure:equip_expenditure,
       year,
       indents_process: [],
       direct_purchase: [],

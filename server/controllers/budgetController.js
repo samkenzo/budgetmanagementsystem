@@ -2,112 +2,29 @@ import Equipment from "../models/equipment.js";
 import Consumable from "../models/consumable.js";
 import { validationResult } from "express-validator";
 
-export const addConEntry = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(404).json({ errors: errors.array() });
-  }
+export const addEntry = async (req, res) => {
   try {
-    const { department, array_name, array_data } = req.body;
-    let table = await Consumable.findOne({ department });
+    const { type, indent, indent_type, year, username } = req.body;
+    let table = {};
+    if (type) table = await Equipment.findOne({ username, year });
+    else table = await Consumable.findOne({ username, year });
     if (!table) {
       return res.status(400).json({
         error: "Dept does not exist, contact Admin to add the department",
       });
     }
-    if (array_name === "indents_process") {
-      table.indents_process.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
-    } else if (array_name === "direct_purchase") {
-      table.direct_purchase.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
-    } else if (array_name === "indent_pay_done") {
-      table.indent_pay_done.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
+    if (!indent_type) {
+      table.indents_process.push(indent);
+      table.expenditure += indent.amount;
+    } else if (indent_type == 1) {
+      table.indent_pay_done.push(indent);
+      table.expenditure += indent.amount;
     } else {
-      return res.status(400).json({ error: "wrong array name" });
+      table.direct_purchase.push(indent);
+      table.expenditure += indent.amount;
     }
     await table.save();
-    res.json({ message: "successful entry" });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Some error occured!");
-  }
-};
-//sample entry
-// {
-//   "department":"CSE",
-//   "array_name":"indents_process",
-//   "array_data":{
-//    "entry_date": null,
-//       "particulars": "process",
-//       "indenter": "nano",
-//       "indent_no": 1,
-//       "po_no": 2,
-//      "indent_amount": 64528,
-//       "amount":9888,
-//       "account_head":"check check",
-//       "active": true
-//   }
-// }
-//=====================================================================================
-// export const addequipmentdept =  async (req, res) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).json({ errors: errors.array() });
-//   }
-//   try {
-
-//     const { department,budget,expenditure,year,indents_process,direct_purchase,indent_pay_done } = req.body;
-
-//     let entry = await Equipment.create({
-//       department,budget,expenditure,year,indents_process,direct_purchase,indent_pay_done
-//     });
-//     res.json({message:`successfully added department ${department}`});
-//   }
-//   catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Some error occured!");
-//   }
-// }
-//sample request --
-// "department":"CSE",
-// "budget":9000000,
-// "expenditure":3444440,
-// "year":2022,
-// "indents_process":[],
-// "direct_purchase":[],
-// "indent_pay_done":[]
-//=============================================================================
-
-//adding indent entry in equipment
-export const addEqEntry = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(404).json({ errors: errors.array() });
-  }
-  try {
-    const { department, array_name, array_data } = req.body;
-    let table = await Equipment.findOne({ department });
-    if (!table) {
-      return res.status(400).json({
-        error: "Dept does not exist, contact Admin to add the department",
-      });
-    }
-    if (array_name === "indents_process") {
-      table.indents_process.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
-    } else if (array_name === "direct_purchase") {
-      table.direct_purchase.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
-    } else if (array_name === "indent_pay_done") {
-      table.indent_pay_done.push(array_data);
-      table.expenditure = table.expenditure + array_data.amount;
-    } else {
-      return res.status(400).json({ error: "wrong array name" });
-    }
-    await table.save();
-    res.json({ message: "successful entry" });
+    res.json({ message: "Successful entry" });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Some error occured!");
@@ -140,7 +57,7 @@ export const fetchTable = async (req, res) => {
       let table = await Equipment.findOne({ username, year });
       if (!table) {
         return res.status(400).json({
-          error: "Dept does not exist, contact Admin to add the department",
+          error: "Data not found",
         });
       }
        let { indents_process, direct_purchase, indent_pay_done } = table;
@@ -154,7 +71,7 @@ export const fetchTable = async (req, res) => {
       let table = await Consumable.findOne({ username, year });
       if (!table) {
         return res.status(400).json({
-          error: "Dept does not exist, contact Admin to add the department",
+          error: "Data not found",
         });
       }
       let {
@@ -188,7 +105,6 @@ export const fetchSummary = async (req, res) => {
   const year = req.query.year;
   try {
     const con_departments = await Consumable.find({ year });
-    console.log(con_departments);
     const con_result = [];
     for (const con of con_departments) {
       con_result.push({

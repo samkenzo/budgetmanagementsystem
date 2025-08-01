@@ -136,14 +136,14 @@ const Home = () => {
               equipment.map((eq, i) => {
                 const { name, budget, expenditure } = eq;
                 return (
-                  <tr onClick={() => handleClick(eq, 1)} role="button">
+                  <tr onClick={() => handleClick(eq, 1)} role="button" id = {i}>
                     <td>{i + 1}</td>
                     <td>{name}</td>
                     <td>{budget}</td>
                     <td>{expenditure}</td>
                     <td>81.71</td>
                     <td>{budget - expenditure}</td>
-                    <td>{(expenditure / budget) * 100}%</td>
+                    <td>{((expenditure / budget) * 100).toFixed(2)}%</td>
                     <td>None</td>
                   </tr>
                 );
@@ -190,7 +190,7 @@ const Home = () => {
                     <td>{expenditure}</td>
                     <td>81.71</td>
                     <td>{budget - expenditure}</td>
-                    <td>{(expenditure / budget) * 100}%</td>
+                     <td>{((expenditure / budget) * 100).toFixed(2)}%</td>
                     <td>None</td>
                   </tr>
                 );

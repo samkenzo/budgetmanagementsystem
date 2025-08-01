@@ -16,6 +16,7 @@ const ConsumableSchema = new Schema({
       indent_amount: Number,
       amount: Number,
       account_head: Number,
+      active: { type: Boolean, default: true },
     },
   ],
   direct_purchase: [
@@ -28,7 +29,7 @@ const ConsumableSchema = new Schema({
       indent_amount: Number,
       amount: Number,
       account_head: String,
-      active: Boolean,
+      active: { type: Boolean, default: true },
     },
   ],
   indent_pay_done: [
@@ -41,7 +42,7 @@ const ConsumableSchema = new Schema({
       indent_amount: Number,
       amount: Number,
       account_head: String,
-      active: Boolean,
+      active: { type: Boolean, default: true },
     },
   ],
 });
