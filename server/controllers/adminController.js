@@ -38,7 +38,9 @@ export const addDept = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  try {
+  try { 
+
+
     const { username, name, password, budget, expenditure, in_process,year } = req.body;
     let user = await User.findOne({ username });
     if (user) {
@@ -90,4 +92,13 @@ export const addDept = async (req, res) => {
 // "expenditure":3444440,
 // "in_process":0,
 // "year":2025
+// }
+
+//{     "username":"cse2",
+// "password":"password",
+// "name":"CSE245",
+// "budget":9000000,
+// "expenditure":3444440,
+// "in_process":0,
+// "year":2022
 // }
