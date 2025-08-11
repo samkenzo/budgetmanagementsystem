@@ -1,28 +1,31 @@
 import express from "express";
-import { fetchSummary, addEntry, fetchTable , deleteAll} from "../controllers/budgetController.js";
+import {
+  fetchSummary,
+  updateEntry,
+  fetchTable,
+  deleteAll,
+} from "../controllers/budgetController.js";
 
 const router = express.Router();
 
-  router.post(
-     "/addentry",
-   addEntry
-  );
-  
-  router.get(
-    "/fetchtable",
-  
-    fetchTable
-  );
+// router.post(
+//   "/addconsumableentry",
 
-  router.get(
-    "/fetchsummary",
-    fetchSummary
-  )
+//   addConEntry
+// );
+router.post(
+  "/updateentry",
 
-  router.post(
-    "/deleteAll",
-    deleteAll
-  )
+  updateEntry
+);
 
+router.get(
+  "/fetchtable",
+
+  fetchTable
+);
+
+router.get("/fetchsummary", fetchSummary);
+router.post("/deleteAll", deleteAll);
 
 export default router;
