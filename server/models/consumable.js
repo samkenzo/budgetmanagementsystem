@@ -5,10 +5,11 @@ const ConsumableSchema = new Schema({
   department: String,
   budget: Number,
   expenditure: { type: Number, default: 0 },
-  year: { type: Date, default: () => new Date().getFullYear() },
+  in_process:{type:Number,default: 0},
+  year: { type: Number, default: () => new Date().getFullYear() },
   indents_process: [
     {
-      entry_date: { type: Date, default: Date.now },
+      entry_date: { type: Date, default: Date.now() },
       particulars: String,
       indenter: String,
       indent_no: { type: Number },
@@ -21,20 +22,20 @@ const ConsumableSchema = new Schema({
   ],
   direct_purchase: [
     {
-      entry_date: { type: Date, default: Date.now },
+      entry_date: { type: Date, default: Date.now() },
       particulars: String,
       indenter: String,
       indent_no: { type: Number },
       po_no: Number,
       indent_amount: Number,
-      amount: Number,
-      account_head: String,
+       amount: {type: Number,default:0},
+      remark: String,
       active: { type: Boolean, default: true },
     },
   ],
   indent_pay_done: [
     {
-      entry_date: { type: Date, default: Date.now },
+      entry_date: { type: Date, default: Date.now() },
       particulars: String,
       indenter: String,
       indent_no: { type: Number },
