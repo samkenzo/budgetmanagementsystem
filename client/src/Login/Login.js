@@ -27,15 +27,16 @@ const Login = () => {
       }
     );
     const json = await response.json();
-
     if (json.error) unSuccessful(json.error);
     else {
-        localStorage.setItem("authToken", json.authToken);
-      console.log(localStorage.getItem("authToken"));
-      successful("You have been logged in succefully.");
+      const{ role} = json.user;
+      localStorage.setItem("authToken", json.authToken);
+      localStorage.setItem("userRole", role);
+      console.log(json)
+      successful("You have been logged in succesfully.");
       setTimeout(() => {
-        if (!json.user.role) navigate("/dept");
-         else navigate("/finance");
+        if (!role) navigate("/dept");
+        else navigate("/finance");
         window.location.reload();
       }, 3000);
     }
