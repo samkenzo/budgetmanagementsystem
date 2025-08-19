@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import { validationResult } from "express-validator";
 import Consumable from "../models/Consumable.js";
 import Equipment from "../models/Equipment.js";
-import OTP from "../models/OTP.js";
+import OTP from "../models/OTP.JS/index.js";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 

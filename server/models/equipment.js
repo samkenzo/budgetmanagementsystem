@@ -7,6 +7,7 @@ const EquipmentSchema = new Schema({
   expenditure: { type: Number, default: 0 },
   in_process:{type:Number,default: 0},
   year: { type: Number, default: () => new Date().getFullYear() },
+  budget_changes:[String],
   indents_process: [
     {
       entry_date: { type: Date, default: Date.now() },
@@ -18,7 +19,7 @@ const EquipmentSchema = new Schema({
       amount: {type: Number,default:0},
       remark: String,
       category: String,
-      status: Boolean,
+      status: Number,
     },
   ],
   direct_purchase: [
@@ -32,7 +33,7 @@ const EquipmentSchema = new Schema({
       amount: Number,
       remark: String,
       category: String,
-      active: Boolean,
+      status: {type: Number, default: 0},
     },
   ],
   // indent_pay_done: [

@@ -7,6 +7,7 @@ const ConsumableSchema = new Schema({
   expenditure: { type: Number, default: 0 },
   in_process: { type: Number, default: 0 },
   year: { type: Number, default: () => new Date().getFullYear() },
+  budget_changes: [String],
   indents_process: [
     {
       entry_date: { type: Date, default: Date.now() },
@@ -17,7 +18,7 @@ const ConsumableSchema = new Schema({
       indent_amount: Number,
       amount: { type: Number, default: 0 },
       remark: String,
-      status: Boolean,
+      status: Number,
     },
   ],
   direct_purchase: [
@@ -30,6 +31,7 @@ const ConsumableSchema = new Schema({
       indent_amount: Number,
       amount: Number,
       remark: String,
+      status: Number,
     },
   ],
 });
