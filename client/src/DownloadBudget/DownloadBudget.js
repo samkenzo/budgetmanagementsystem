@@ -4,9 +4,14 @@ import * as XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
 const DownloadBudget = ({ budget }) => {
   const { year, department, indents, total, totalBudget } = budget;
-  const { name, type } = department;
-  const { inProcess, directPurchase } = indents;
-  const statusArr = ["Indent in Process", "Indent Payment Done"];
+  const { name, type, username } = department;
+  const { inProcess, directPur } = indents;
+  const statusArr = [
+    "Indent in Process",
+    "Indent Payment Done",
+    "Entry Deleted",
+  ];
+  const dirArr = ["Direct Purchased", "Entry Deleted"];
 
   const s2ab = (s) => {
     const buf = new ArrayBuffer(s.length);
@@ -55,17 +60,18 @@ const DownloadBudget = ({ budget }) => {
         C: total.expenditure,
         D: "",
         E: total.inProcess,
-        D: "",
-        G: totalBudget - total.expenditure,
         F: "",
+        G: totalBudget - total.expenditure,
+        H: "",
         I: `${((total.expenditure * 100) / totalBudget).toFixed(2)}%`,
       },
+      {},
       {},
     ];
 
     let table1 = [
       {
-        A: "Sr.No.",
+        A: "Sr. No.",
         B: "Status",
         C: "Entry Date",
         D: "Particulars",
@@ -105,14 +111,53 @@ const DownloadBudget = ({ budget }) => {
         K: remark,
       });
     });
+
+    let table2 = [
+      {
+        A: "Sr. No.",
+        B: "Status",
+        C: "Entry Date",
+        D: "Particulars",
+        E: "Year",
+        F: "Indenter",
+        G: "Indent No.",
+        H: "Amount",
+        I: "Remarks",
+      },
+    ];
+    i = 1;
+    directPur.forEach((entry) => {
+      const {
+        entry_date,
+        particulars,
+        indenter,
+        indent_no,
+        amount,
+        remark,
+        status,
+      } = entry;
+      table2.push({
+        A: i++,
+        B: dirArr[status],
+        C: new Date(entry_date).toDateString(),
+        D: particulars,
+        E: `${year}-${(year % 100) + 1}`,
+        F: indenter,
+        G: indent_no,
+        H: amount,
+        I: remark,
+      });
+    });
+
     table1 = [{ A: "Indents" }].concat(table1);
-    const finalTable = [...title, ...table0, ...table1];
+    table2 = [{ A: "Direct Purchases" }].concat(table2);
+    const finalTable = [...title, ...table0, ...table1, {}, {}, ...table2];
 
     const wb = XLSX.utils.book_new();
     const sheet = XLSX.utils.json_to_sheet(finalTable, {
       skipHeader: true,
     });
-    XLSX.utils.book_append_sheet(wb, sheet, "Indents");
+    XLSX.utils.book_append_sheet(wb, sheet, username);
     const workbookBlob = worbook2blob(wb);
     const dataInfo = {
       iiti: "A1",
@@ -132,12 +177,28 @@ const DownloadBudget = ({ budget }) => {
         "I7:J7",
       ],
       table0Range: "A6:J7",
-      tableType: [
-        "A9",
-        "K9",
-        `A${inProcess.length + 13}:K${inProcess.length + 13}`,
-      ],
+      tableHead: [],
+      table12Range: [],
     };
+    finalTable.forEach((data, index) => {
+      if (data["A"] === "Indents" || data["A"] === "Direct Purchases") {
+        dataInfo.tableHead.push(
+          `A${index + 1}:${dataInfo.tableHead.length ? "J" : "K"}${index + 1}`
+        );
+        dataInfo.tableHead.push(
+          `A${index + 2}:${dataInfo.tableHead.length > 1 ? "J" : "K"}${
+            index + 2
+          }`
+        );
+        dataInfo.table12Range.push(
+          `A${index + 3}:${dataInfo.table12Range.length ? "J" : "K"}${
+            index +
+            2 +
+            (dataInfo.table12Range.length ? directPur.length : inProcess.length)
+          }`
+        );
+      }
+    });
     return addStyles(workbookBlob, dataInfo);
   };
 
@@ -146,11 +207,11 @@ const DownloadBudget = ({ budget }) => {
     workbook.sheets().forEach((sheet) => {
       for (let j = 65; j <= 75; j++) {
         const i = String.fromCharCode(j);
-        if (i === "K") sheet.column(i).width(25);
-        else if (i === "B" || i == "D") sheet.column(i).width(20);
-        else if (i == "C" || i === "F" || i === "I" || i == "J")
-          sheet.column(i).width(15);
-        else sheet.column(i).width(10);
+        if (i === "K" || i === "D") sheet.column(i).width(26);
+        else if (i === "B") sheet.column(i).width(21);
+        else if (i === "C" || i === "F" || i === "I" || i === "J")
+          sheet.column(i).width(16);
+        else sheet.column(i).width(11);
 
         sheet.range(dataInfo.iitiRange).merged(true).style({
           bold: true,
@@ -171,12 +232,11 @@ const DownloadBudget = ({ budget }) => {
           fontSize: 12,
         });
         dataInfo.totalRange.forEach((element) => {
-          console.log(element);
           sheet
             .range(element)
             .merged(true)
             .style({
-              bold: element[1] == "6",
+              bold: element[1] === "6",
               horizontalAlignment: "center",
               verticalAlignment: "center",
             });
@@ -184,6 +244,31 @@ const DownloadBudget = ({ budget }) => {
         sheet
           .range(dataInfo.table0Range)
           .style({ border: true, fill: "DBDBDB" });
+        dataInfo.tableHead.forEach((element, index) => {
+          sheet
+            .range(element)
+            .merged(index % 2 === 0)
+            .style({
+              bold: true,
+              border: true,
+              fill: "F4F3AB",
+              horizontalAlignment: "center",
+              verticalAlignment: "center",
+              fontSize: 12,
+            });
+        });
+        dataInfo.table12Range.forEach((element, index) => {
+          sheet.range(element).style({
+            fill: "EFEFEF",
+            border: true,
+            horizontalAlignment: "center",
+            verticalAlignment: "center",
+          });
+        });
+        for (let i = 0; i <= directPur.length; i++) {
+          const idx = i + inProcess.length + 15;
+          sheet.range(`I${idx}:J${idx}`).merged(true);
+        }
       }
     });
     workbookBlob = await workbook.outputAsync();
@@ -194,7 +279,17 @@ const DownloadBudget = ({ budget }) => {
     const url = await handleExport();
     const downloadNode = document.createElement("a");
     downloadNode.setAttribute("href", url);
-    downloadNode.setAttribute("download", "hello.xlsx");
+    const currentDate = new Date();
+    const fileName = `budget_${currentDate.getFullYear()}-${(
+      currentDate.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${currentDate.getDate().toString().padStart(2, "0")}`;
+    console.log(fileName);
+    downloadNode.setAttribute(
+      "download",
+      `${username}${year % 100}-${(year % 100) + 1}_${fileName}.xlsx`
+    );
     downloadNode.click();
     downloadNode.remove();
   };
