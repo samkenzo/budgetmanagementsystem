@@ -1,51 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import "./navbar.css";
 import logo from "../../assets/images/iitindorelogo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import YearContext from "../../contexts/year/YearContext";
-import AlertContext from "../../contexts/alert/AlertContext";
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  const {setYear}=useContext(YearContext)
   const [years] = useState(() => {
-    let years = [];
+    let years=[];
     for (let i = 2021; i <= new Date().getFullYear(); i++) years.push(i);
     return years;
   });
-  const { setYear, year } = useContext(YearContext);
-  const { successful, unSuccessful } = useContext(AlertContext);
-  const role = parseInt(localStorage.getItem("userRole"));
-
-  useEffect(() => {
-    if (!localStorage.getItem("authToken")) navigate("/");
-  }, []);
-
-  const logOut = () => {
-    localStorage.clear("authToken");
-    navigate("/");
-  };
 
   const changeYear = (i) => {
     setYear(i);
-  };
-
-  const addNewYear = async () => {
-    const numYear = parseInt(year);
-    const response = await fetch(
-      `${process.env.REACT_APP_API_HOST}/api/admin/newYear`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          "auth-token": localStorage.getItem("authToken"),
-        },
-        body: JSON.stringify({ curr_year: numYear }),
-      }
-    );
-    const json = await response.json();
-    console.log(json);
-    if (json.error) unSuccessful(json.error);
-    else successful(json.success);
   };
 
   return (
@@ -54,7 +22,7 @@ const Navbar = () => {
         <nav className="navbar navbar-expand-lg custom-navbar">
           <div className="container-fluid">
             <div className="container2">
-              <Link className="navbar-brand" to="/finance">
+              <Link className="navbar-brand" to="/">
                 <img
                   src={logo}
                   alt="Logo"
@@ -86,22 +54,11 @@ const Navbar = () => {
                     <Link
                       className="nav-link active"
                       aria-current="page"
-                      to="/finance"
+                      to="/dept"
                     >
-                      Home
+                      Home |
                     </Link>
                   </li>
-                  {role === 2 && (
-                    <li className="nav-item">
-                      <Link
-                        className="nav-link active"
-                        aria-current="page"
-                        onClick={addNewYear}
-                      >
-                        Add new Year
-                      </Link>
-                    </li>
-                  )}
                   <li className="nav-item dropdown">
                     <Link
                       className="nav-link dropdown-toggle"
@@ -127,43 +84,28 @@ const Navbar = () => {
                       })}
                     </ul>
                   </li>
-                  {role === 2 && (
-                    <li className="nav-item dropdown">
+
+                  {localStorage.getItem("authToken") ? (
+                    <li className="nav-item">
                       <Link
-                        className="nav-link dropdown-toggle"
+                        className="nav-link active"
+                        aria-current="page"
                         to="/"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
                       >
-                        Manage Users
+                        Logout
                       </Link>
-                      <ul className="dropdown-menu">
-                        <li>
-                          <Link className="dropdown-item" to="/finance/adduser">
-                            Add new user/dept
-                          </Link>
-                        </li>
-                        <hr className="dropdown-divider" />
-                        <li>
-                          <Link
-                            className="dropdown-item"
-                            to="/finance/allusers"
-                          >
-                            View all users/depts
-                          </Link>
-                        </li>
-                      </ul>
+                    </li>
+                  ) : (
+                    <li className="nav-item">
+                      <Link
+                        className="nav-link active"
+                        aria-current="page"
+                        to="/login"
+                      >
+                        Log in
+                      </Link>
                     </li>
                   )}
-
-                  <li
-                    className="nav-item nav-link active"
-                    role="button"
-                    onClick={logOut}
-                  >
-                    Logout
-                  </li>
                 </ul>
               </div>
             </div>

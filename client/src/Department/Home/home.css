@@ -1,0 +1,9 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color:rgb(75, 137, 172);; /* Set the background color here */
+  }
+  
+  

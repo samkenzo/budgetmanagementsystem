@@ -1,0 +1,31 @@
+.container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    
+
+  }
+  .container2{
+    display: flex;
+    align-items: center;
+  }
+
+  .centered-div2 {
+    padding: 5%;
+  }
+  .custom-navbar {
+    background-color: #27374d; 
+  }
+  .navbar-nav .nav-link{
+    color: white !important; 
+  }
+  .nav-title{
+    color: white !important; 
+  }
+  .navbar-brand img {
+    background-color: white;
+    border-radius: 50% ;
+    padding: 2px;
+  }
+  
+  

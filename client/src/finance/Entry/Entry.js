@@ -4,10 +4,9 @@ import "./entry.css";
 
 const Entry = ({ props }) => {
   const { initialIndent, submitIndent, setIndentActive } = props;
-  initialIndent.status = 0;
   const { year } = useContext(YearContext);
-  const [edit, setEdit] = useState(0);
   const [indent, setIndent] = useState(initialIndent);
+  const [edit, setEdit] = useState(indent.edit === 1);
   const {
     i,
     entry_date,
@@ -21,7 +20,13 @@ const Entry = ({ props }) => {
     status,
     type,
   } = indent;
-  const statusArr = ["Indent in Process", "Indent Payment Done"];
+  if (po_no === null) setIndent({ ...indent, po_no: "" });
+  const statusArr = [
+    "Indent in Process",
+    "Indent Payment Done",
+    "Entry Deleted",
+  ];
+  const dirArr = ["Direct Purchased", "Entry Deleted"];
 
   let date;
   if (entry_date) date = new Date(entry_date).toDateString();
@@ -32,15 +37,24 @@ const Entry = ({ props }) => {
   };
   const handleSubmit = async () => {
     const response = await submitIndent(indent);
-    console.log(response);
-    if (response == 1) setEdit(0);
+    if (response === 1) setEdit(0);
   };
 
   return edit ? (
     <tr key={i}>
       <td>{i + 1}</td>
       {type ? (
-        <>Direct Purchased</>
+        <td>
+          <select name="status" value={indent.status} onChange={handleOnChange}>
+            {dirArr.map((mess, i) => {
+              return (
+                <option value={i} key={i}>
+                  {mess}
+                </option>
+              );
+            })}
+          </select>
+        </td>
       ) : (
         <td>
           <select name="status" value={indent.status} onChange={handleOnChange}>
@@ -54,7 +68,16 @@ const Entry = ({ props }) => {
           </select>
         </td>
       )}
-      <td>{date}</td>
+      <td>
+        {" "}
+        <input
+          type="date"
+          onChange={handleOnChange}
+          name="entry_date"
+          value={indent.date}
+          defaultValue={new Date().toISOString().split("T")[0]}
+        ></input>
+      </td>
       <td>
         <input
           onChange={handleOnChange}
@@ -72,7 +95,7 @@ const Entry = ({ props }) => {
           name="indenter"
         ></input>
       </td>
-      {initialIndent.indent_no == "" ? (
+      {initialIndent.indent_no === "" ? (
         <td>
           <input
             value={indent_no}
@@ -90,6 +113,7 @@ const Entry = ({ props }) => {
           onChange={handleOnChange}
           name="po_no"
           type="number"
+          disabled={type}
         ></input>
       </td>
       <td>
@@ -98,6 +122,7 @@ const Entry = ({ props }) => {
           onChange={handleOnChange}
           name="indent_amount"
           type="number"
+          disabled={type}
         ></input>
       </td>
       <td>
@@ -119,7 +144,7 @@ const Entry = ({ props }) => {
   ) : (
     <tr key={i}>
       <td>{i + 1}</td>
-      <td>{type ? "Direct Purchased" : statusArr[status]}</td>
+      <td>{type ? dirArr[status] : statusArr[status]}</td>
       <td>{date}</td>
       <td>{particulars}</td>
       <td>
@@ -132,21 +157,26 @@ const Entry = ({ props }) => {
       <td>{amount}</td>
       <td>{remark}</td>
       <td>
-        <button
-          onClick={() => {
-            setEdit(1);
-            setIndentActive(indent_no);
-          }}
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => {
-            alert("Will be implemented soon.");
-          }}
-        >
-          Delete
-        </button>
+        {type === 1 && parseInt(status) !== 1 && (
+          <button
+            onClick={() => {
+              setEdit(1);
+              setIndentActive(indent_no);
+            }}
+          >
+            Edit
+          </button>
+        )}
+        {type === 0 && parseInt(status) !== 2 && (
+          <button
+            onClick={() => {
+              setEdit(1);
+              setIndentActive(indent_no);
+            }}
+          >
+            Edit
+          </button>
+        )}
       </td>
     </tr>
   );

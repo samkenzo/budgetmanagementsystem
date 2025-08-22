@@ -1,0 +1,125 @@
+.user{
+    font-family: sans-serif;
+    background-color: #fdf8f8;
+    color: #ffffff;
+}
+
+h3{
+  color: #17393e;
+}
+.entry-form {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-content {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #0066cc;
+}
+
+.form-text,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: none;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0066cc;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #004080;
+}
+
+textarea {
+    resize: vertical;
+
+}
+.heading{
+  color: #17393e;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+}
+
+
+
+.custom-navbar {
+    background-color: #27374d; /* Your custom color */
+  }
+  .navbar-nav .nav-link{
+    color: white !important; /* Set text color to white */
+  }
+  .nav-title{
+    color: white !important; /* Set text color to white */
+  }
+  .navbar-brand img {
+    background-color: white;
+    border-radius: 50% ;
+    padding: 2px;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    
+
+  }
+  .container2{
+    display: flex;
+    align-items: center;
+  }
+
+  .centered-div2 {
+    padding: 4%;
+    /* Add styling for your centered div here */
+  }
+
+  .centered-div{
+    width: 600px;
+  }
+
+  .confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .confirmation-card {
+    background-color: #edf7ed;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0
+  }

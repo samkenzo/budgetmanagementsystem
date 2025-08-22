@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    
+
+  }
+  .container2{
+    display: flex;
+    align-items: center;
+  }
+
+  .centered-div2 {
+    padding: 5%;
+    /* Add styling for your centered div here */
+  }
+  .custom-navbar {
+    background-color: #27374d; /* Your custom color */
+  }
+  .navbar-nav .nav-link{
+    color: white !important; /* Set text color to white */
+  }
+  .nav-title{
+    color: white !important; /* Set text color to white */
+  }
+  .navbar-brand img {
+    background-color: white;
+    border-radius: 50% ;
+    padding: 2px;
+  }
+  
+  
