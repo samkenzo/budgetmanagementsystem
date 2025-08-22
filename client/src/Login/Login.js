@@ -3,6 +3,7 @@ import AlertContext from "../contexts/alert/AlertContext";
 import { Link, useNavigate } from "react-router-dom";
 import finImage from "../assets/images/finance.webp";
 import logo from "../assets/images/iitindorelogo.png";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -16,34 +17,37 @@ const Login = () => {
     const { name, value } = e.target;
     setCredentials({ ...credentials, [name]: value });
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+console.log(`${process.env.REACT_APP_API_HOST}/api/user/login`)
+  const login = async (token) => {
     const response = await fetch(
-      `http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/api/user/login`,
+      `${process.env.REACT_APP_API_HOST}/api/user/login`,
       {
         method: "POST",
-        headers: { "Content-type": "application/json" },
+        headers: {
+          "Content-type": "application/json",
+          Authorization:token? `Bearer ${token}`:null,
+        },
         body: JSON.stringify(credentials),
       }
     );
     const json = await response.json();
     if (json.error) unSuccessful(json.error);
     else {
-      const{ role} = json.user;
+      const { role } = json.user;
       localStorage.setItem("authToken", json.authToken);
       localStorage.setItem("userRole", role);
-      console.log(json)
+      console.log(json);
       successful("You have been logged in succesfully.");
       setTimeout(() => {
         if (!role) navigate("/dept");
         else navigate("/finance");
         window.location.reload();
-      }, 3000);
+      }, 2000);
     }
   };
 
   return (
-    <>
+    <div style={{ minHeight: "94vh" }}>
       <section className="bg-light p-3 p-md-4 p-xl-5">
         <div className="container">
           <div className="row justify-content-center">
@@ -77,9 +81,25 @@ const Login = () => {
                           </div>
                         </div>
                         <div className="row"></div>
-                        <form onSubmit={handleSubmit}>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            login();
+                          }}
+                        >
                           <div className="row gy-3 overflow-hidden">
                             <div className="col-12">
+                              <div className="form-floating mb-4">
+                                <GoogleLogin
+                                  onSuccess={(credentialResponse) => {
+                                    const { credential } = credentialResponse;
+                                    if (credential) {
+                                      login(credential);
+                                    }
+                                  }}
+                                  onError={(err) => console.log(err)}
+                                />
+                              </div>
                               <div className="form-floating mb-3">
                                 <input
                                   className="form-control"
@@ -116,6 +136,17 @@ const Login = () => {
                                 >
                                   Password
                                 </label>
+                                <br />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "left",
+                                  }}
+                                >
+                                  <Link to={"/forgot-password"}>
+                                    Forgot Password
+                                  </Link>
+                                </div>
                               </div>
                             </div>
                             <div className="col-12">
@@ -139,7 +170,7 @@ const Login = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

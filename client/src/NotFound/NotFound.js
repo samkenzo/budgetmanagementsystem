@@ -1,12 +1,24 @@
-import React from 'react';
+import React from "react";
 
 const NotFound = () => {
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "white",
+        minHeight: "94vh",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
       <h2>404 - Page Not Found</h2>
-      <p>Sorry, the page you are looking for does not exist.</p>
+      <hr />
+      <p style={{ color: "black", textAlign: "center" }}>
+        Sorry, the page you are looking for does not exist.
+      </p>
     </div>
   );
-}
+};
 
 export default NotFound;
