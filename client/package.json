@@ -29,7 +29,7 @@
     "xlsx-populate": "^1.21.0"
   },
   "scripts": {
-   "start": "react-scripts start",
+    "start": "react-scripts start",
     "build": "CI=false react-scripts build",
     "vercel-build": "CI=false react-scripts build",
     "test": "react-scripts test",
@@ -55,6 +55,7 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "react-dev-utils": "^12.0.1"
   }
 }
